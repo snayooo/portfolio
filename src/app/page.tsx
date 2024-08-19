@@ -2,7 +2,6 @@
 import Link from "next/link";
 import About from "@/components/pages/About";
 import Footer from "@/components/Footer";
-import { projects } from "@/projectsData";
 import { Chip } from "@nextui-org/react";
 
 export default function Home() {
@@ -32,30 +31,16 @@ export default function Home() {
           <h1 className="sm:text-8xl text-5xl text-center text-purple-700 font-bold">
             My work
           </h1>
-          <div className="w-[60vw] sm:mx-[20vw] mx-[10vw] flex justify-evenly sm:flex-row flex-col">
-            {projects.map((project) => {
-              return (
-                <div
-                  className="p-4 sm:w-96 w-[80vw] h-auto bg-neutral-800 rounded-xl mt-8 flex items-center flex-col"
-                  key={project.id}
-                >
-                  <Chip variant="bordered" color={project.statusColor}>
-                    {project.status}
-                  </Chip>
-                  <img
-                    src={project.imgUrl}
-                    alt="Image not availible"
-                    className="rounded-xl h-[25vh] w-[25vh] my-2 items-center"
-                  />
-                  <h1 className="text-2xl text-center font-semibold text-purple-700">
-                    {project.title}
-                  </h1>
-                  <div>
-
-                  </div>
-                </div>
-              );
-            })}
+          <div className="w-[60vw] sm:mx-[20vw] mx-[10vw] flex justify-evenly sm:flex-row flex-col mt-8">
+            <div className="w-64 h-80 border-2 border-white rounded-xl">
+              <img className="w-48 h-auto m-auto" src="projects/scrimfinder.png" alt="Couldn't find image..." />
+              <h2 className="m-1 text-xl text-purple-700 font-bold">Scrimfinder Discord Bot</h2>
+              <p className="m-1">This is a Discord bot, that helps the user to find scrims.</p>
+              <div className="px-2 pt-2 flex w-full justify-between underline">
+                <Link className="bottom-1 hover:text-purple-700 transition-all" href="https://scrimfinder.gg">Website</Link>
+                <Link className="bottom-1 hover:text-purple-700 transition-all" href="https://docs.scrimfinder.gg/invite">Invite the bot</Link>
+              </div>
+            </div>
           </div>
         </div>
         <div id="contact" className="w-full py-20">
