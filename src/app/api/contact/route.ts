@@ -1,5 +1,4 @@
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 
 type Data = {
   success: boolean;
@@ -24,44 +23,44 @@ export async function POST(req: Request) {
     );
   }
 
-  const transporter = nodemailer.createTransport({
-    host: "mail.smtp2go.com", // e.g. "mail.snayo.net"
-    port: 587,
-    secure: false, // true for 465, false for 587
-    auth: {
-      user: process.env.SMTP_USER, // e.g. "noreply@snayo.net"
-      pass: process.env.SMTP_PASS,
-    },
-  });
+  try {
+    const response = await fetch("https://api.smtp2go.com/v3/email/send", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        api_key: process.env.SMTP2GO_API_KEY,
+        sender: "web@snayo.net",
+        to: ["maurice@snayo.net"],
+        subject: `Contact Form: ${subject}`,
+        text_body: `
+          First Name: ${firstName}
+          Last Name: ${lastName}
+          Email: ${email}
+          Subject: ${subject}
+          Message:
+          ${message}
+        `,
+      }),
+    });
 
-  const mailOptions = {
-    from: `<${process.env.SMTP_USER}>`,
-    to: "maurice@snayo.net",
-    subject: `Contact Form: ${subject}`,
-    text: `
-      You have a new contact form submission:
-      First Name: ${firstName}
-      Last Name: ${lastName}
-      Email: ${email}
-      Subject: ${subject}
-      Message:
-      ${message}
-    `,
-  };
-
-  transporter.sendMail(mailOptions, (error, info) => {
-    if (error) {
-      console.error("Error sending email:", error);
+    if (!response.ok) {
+      const errText = await response.text();
+      console.error("SMTP2GO API error:", errText);
       return NextResponse.json(
-        { success: false, message: "Error sending email" },
+        { success: false, message: "Failed to send email" },
         { status: 500 }
       );
     }
-    console.log("Email sent successfully");
-  });
 
-  return NextResponse.json(
-    { success: true, message: "Message received" },
-    { status: 200 }
-  );
+    return NextResponse.json(
+      { success: true, message: "Message sent successfully" },
+      { status: 200 }
+    );
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return NextResponse.json(
+      { success: false, message: "Error sending email" },
+      { status: 500 }
+    );
+  }
 }
